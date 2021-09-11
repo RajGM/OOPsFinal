@@ -17,13 +17,6 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     
-    tableComponent.getHeader().addColumn("ID", 1, 25);
-    tableComponent.getHeader().addColumn("Track title",2,250);
-    tableComponent.getHeader().addColumn("Time", 3, 45);
-    tableComponent.getHeader().addColumn("Delete", 4, 45);
-
-    tableComponent.setModel(this);
-
     addAndMakeVisible(tableComponent);
     addAndMakeVisible(searchInput);
     addAndMakeVisible(importTrackButton);
@@ -38,6 +31,13 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     searchInput.setTextToShowWhenEmpty("Enter Track Title to Search for", Colours::yellow);
     searchInput.onReturnKey = [this] { searchTrack(searchInput.getText()); };
 
+    tableComponent.getHeader().addColumn("ID", 1, 25);
+    tableComponent.getHeader().addColumn("Track title", 2, 250);
+    tableComponent.getHeader().addColumn("Time", 3, 45);
+    tableComponent.getHeader().addColumn("Delete", 4, 45);
+    tableComponent.setModel(this);
+
+    loadSavedTrackList();
 }
 
 PlaylistComponent::~PlaylistComponent()
@@ -245,19 +245,36 @@ void PlaylistComponent::loadToDeck(DeckGUI* deckGUI) {
 
 void PlaylistComponent::saveTrackList() {
 
-   std::ofstream myfile("library.txt");
+   std::ofstream myfile("library.csv");
     
-    for (int i = 0; i < trackData.size(); i++) {
-        myfile<<trackData[i].file.getFullPathName() << "," << trackData[i].length << "\n";
-    }
+   for (IndiTrack& t : trackData)
+   {
+       myfile << t.file.getFullPathName() << "," << t.length << "\n";
+   }
 
-    std::ofstream myLibrary("my-library.csv");
+    myfile.close();
 
-    // save library to file
-    for (IndiTrack& t : trackData)
+}
+
+
+void PlaylistComponent::loadSavedTrackList() {
+
+    std::ifstream myfile("library.csv");
+    std::string filePath;
+    std::string length;
+
+    // Read data, line by line
+    if (myfile.is_open())
     {
-        myLibrary << t.file.getFullPathName() << "," << t.length << "\n";
-    }
+        while (getline(myfile, filePath, ',')) {
+            juce::File file{ filePath };
+            IndiTrack newTrack{ file };
 
+            getline(myfile, length);
+            newTrack.length = length;
+            trackData.push_back(newTrack);
+        }
+    }
+    myfile.close();
 
 }

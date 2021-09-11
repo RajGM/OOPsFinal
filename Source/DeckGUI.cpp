@@ -37,6 +37,10 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player, AudioFormatManager& formatMangerToUse,
     volSlider.setRange(0.0, 1.0);
     speedSlider.setRange(0.0, 3.0);
     posSlider.setRange(0.0, 1.0);
+
+    volSlider.setValue(1);
+    speedSlider.setValue(1);
+    posSlider.setValue(1);
 }
 
 DeckGUI::~DeckGUI()
