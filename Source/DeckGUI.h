@@ -22,6 +22,7 @@ public:
     DeckGUI(DJAudioPlayer* player,AudioFormatManager &formatMangerToUse,
         AudioThumbnailCache &cacheToUse);
     ~DeckGUI() override;
+
     void paint (juce::Graphics&) override;
     void resized() override;
 
@@ -46,6 +47,11 @@ private:
     Slider posSlider;
     DJAudioPlayer* player;
     WaveformDisplay waveformDisplay;
+
+    Label  volLabel;
+    Label  speedLabel;
+    Label  posLabel;
+
 
 public:
     void loadFile(URL fileURL);
