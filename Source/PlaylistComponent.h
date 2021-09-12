@@ -16,14 +16,12 @@
 #include <fstream>
 #include <iostream>
 
-
 #include "DeckGUI.h"
 #include "DJAudioPlayer.h"
 #include "IndiTrack.h"
 
-//==============================================================================
-/*
-*/
+//==============================================================================//
+
 class PlaylistComponent  : public juce::Component, public TableListBoxModel, public Button::Listener, public TextEditor::Listener
 {
 public:
@@ -82,7 +80,5 @@ private:
     
     void loadToDeck(DeckGUI *deckGUI);
 
-
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistComponent)
 };

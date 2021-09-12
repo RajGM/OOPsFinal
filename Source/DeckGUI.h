@@ -51,11 +51,13 @@ private:
     Label  volLabel;
     Label  speedLabel;
     Label  posLabel;
+    
+    TextEditor trackTitleLabel;
+    TextEditor trackLengthLabel;
 
 
 public:
     void loadFile(URL fileURL);
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };

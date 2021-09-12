@@ -76,6 +76,13 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player, AudioFormatManager& formatMangerToUse,
     posLabel.attachToComponent(&posSlider, false);
     posLabel.setJustificationType(Justification::centred);
 
+    addAndMakeVisible(trackTitleLabel);
+    trackTitleLabel.setText("Track Title",false);
+    trackTitleLabel.setReadOnly(true);
+
+    addAndMakeVisible(trackLengthLabel);
+    trackLengthLabel.setText("Time",false);
+    trackLengthLabel.setReadOnly(true);
 
 }
 
@@ -110,7 +117,8 @@ void DeckGUI::resized()
     speedSlider.setBounds(getWidth() / 3, rowH+25, getWidth() / 3, 2 * rowH);
     posSlider.setBounds(2 * getWidth() / 3, rowH+25, getWidth()/3, 2 * rowH);
     waveformDisplay.setBounds(0,(rowH*4)-20,getWidth(),2*rowH);
-   
+    trackTitleLabel.setBounds(0,(rowH * 5)+10,100,20);
+    trackLengthLabel.setBounds(getWidth()-50, (rowH * 5)+10,50,20);
     startTimer(10);
 
 }
@@ -190,6 +198,7 @@ void DeckGUI::loadFile(URL fileURL) {
        
     player->loadURL(fileURL);
     waveformDisplay.loadURL(fileURL);
-
+    trackTitleLabel.setText(fileURL.getFileName());
+    trackLengthLabel.setText(player->getTrackTotalTime()+"s");
 }
 

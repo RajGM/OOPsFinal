@@ -28,7 +28,7 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     loadDeck2Button.addListener(this);
     importTrackButton.addListener(this);
 
-    searchInput.setTextToShowWhenEmpty("Enter Track Title to Search for", Colours::yellow);
+    searchInput.setTextToShowWhenEmpty("Enter Track Title to Search for", Colours::white);
     searchInput.onReturnKey = [this] { searchTrack(searchInput.getText()); };
 
     tableComponent.getHeader().addColumn("ID", 1, 25);
@@ -38,6 +38,9 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     tableComponent.setModel(this);
 
     loadSavedTrackList();
+
+    searchInput.setColour(TextEditor::backgroundColourId,Colours::orange);
+    
 }
 
 PlaylistComponent::~PlaylistComponent()
@@ -64,6 +67,9 @@ void PlaylistComponent::paint (juce::Graphics& g)
     g.setFont (14.0f);
     g.drawText ("PlaylistComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
+
+   
+
 }
 
 void PlaylistComponent::resized()
@@ -77,6 +83,7 @@ void PlaylistComponent::resized()
     importTrackButton.setBounds(colW, rowH, colW, rowH);
     loadDeck1Button.setBounds(colW, rowH * 2, colW, rowH);
     loadDeck2Button.setBounds(colW, rowH * 3, colW, rowH);
+    
     
 }
 
