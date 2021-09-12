@@ -40,7 +40,13 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     loadSavedTrackList();
 
     searchInput.setColour(TextEditor::backgroundColourId,Colours::orange);
+    tableComponent.setColour(TableListBox::backgroundColourId, Colours::cornsilk);
     
+    loadDeck1Button.setColour(TextButton::buttonColourId,Colours::forestgreen);
+    loadDeck2Button.setColour(TextButton::buttonColourId, Colours::limegreen);
+    importTrackButton.setColour(TextButton::buttonColourId, Colours::palevioletred);
+
+
 }
 
 PlaylistComponent::~PlaylistComponent()
@@ -67,8 +73,6 @@ void PlaylistComponent::paint (juce::Graphics& g)
     g.setFont (14.0f);
     g.drawText ("PlaylistComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
-
-   
 
 }
 
@@ -167,15 +171,12 @@ void PlaylistComponent::buttonClicked(Button* button) {
 }
 
 void PlaylistComponent::searchTrack(String track) {
-    DBG("Searching library for: " << track);
 
     if (track != "" || track.length()>0 ) {
         int rowID = trackID(track);
         tableComponent.selectRow(rowID);
     }
     else {
-        //deslect all row
-        //alert not found
         tableComponent.deselectAllRows();
     }
 
@@ -192,7 +193,7 @@ int PlaylistComponent::trackID(String trackTitle) {
 }
 
 void PlaylistComponent::loadTrackInList() {
-    DBG("LOAD TRACK IN LIST CALLED");
+
     FileChooser chooser{ "Select a Track or multiple Tracks..." };
     if (chooser.browseForMultipleFilesToOpen()) {
         
@@ -204,11 +205,9 @@ void PlaylistComponent::loadTrackInList() {
                 URL trackURL{ file };
                 newTrack.length = getLength(trackURL);
                 trackData.push_back(newTrack);
-                DBG("New Track Title: " << newTrack.title);
-                DBG("New Track Length: " << newTrack.length);
             }
             else {
-                //File exists
+                //File exists do nothing
             }
 
         }
@@ -235,13 +234,12 @@ void PlaylistComponent::loadToDeck(DeckGUI* deckGUI) {
     int selectedRow{ tableComponent.getSelectedRow() };
     if (selectedRow != -1)
     {
-        //DBG("Adding: " << tracks[selectedRow].title << " to Player");
         deckGUI->loadFile(trackData[selectedRow].url);
     }
     else
     {
         juce::AlertWindow::showMessageBox(juce::AlertWindow::AlertIconType::InfoIcon,
-            "Add to Deck Information:",
+            "Add to Deck Error:",
             "Please select a track to add to deck",
             "OK",
             nullptr
@@ -270,7 +268,6 @@ void PlaylistComponent::loadSavedTrackList() {
     std::string filePath;
     std::string length;
 
-    // Read data, line by line
     if (myfile.is_open())
     {
         while (getline(myfile, filePath, ',')) {
