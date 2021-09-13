@@ -35,13 +35,16 @@ public:
     void filesDropped(const StringArray& files, int x, int y) override;
 
     void timerCallback() override;
-
+    
 private:
     DJAudioPlayer* djAudioPlayerplayer;
 
     TextButton playButton{ "PLAY" };
     TextButton stopButton{ "STOP" };
     TextButton loadButton{ "LOAD" };
+    TextButton forwardButton{ ">>" };
+    TextButton backwardButton{ "<<" };
+
     Slider volSlider;
     Slider speedSlider;
     Slider posSlider;
@@ -55,7 +58,8 @@ private:
     TextEditor trackTitleLabel;
     TextEditor trackLengthLabel;
 
-
+    Slider progressSliderBar;
+    
 public:
     void loadFile(URL fileURL);
 

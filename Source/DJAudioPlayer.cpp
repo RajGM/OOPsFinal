@@ -7,7 +7,7 @@ Author:  rajgm
 
 ==============================================================================
 */
-
+//CPP file for the DJ AudioPlayer which handles the functionality for the tracks
 #include "DJAudioPlayer.h"
 
 DJAudioPlayer::DJAudioPlayer(AudioFormatManager& _formatManager):formatManager(_formatManager) {
@@ -17,6 +17,7 @@ DJAudioPlayer::DJAudioPlayer(AudioFormatManager& _formatManager):formatManager(_
 DJAudioPlayer::~DJAudioPlayer() {
 
 }
+
 
 void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
 	transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -32,6 +33,7 @@ void DJAudioPlayer::releaseResources()  {
 	resampleSource.releaseResources();
 }
 
+//load track into the player
 void DJAudioPlayer::loadURL(URL audioURL) {
 	auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
 	if (reader != nullptr) {
@@ -41,6 +43,7 @@ void DJAudioPlayer::loadURL(URL audioURL) {
 	}
 }
 
+//Setting up olume
 void DJAudioPlayer::setGain(double gain) {
 	if (gain < 0 || gain > 1) {
 		std::cout << "DJ AudioPlayer Gain invalid values" << std::endl;
@@ -50,6 +53,7 @@ void DJAudioPlayer::setGain(double gain) {
 	}	
 }
 
+//Setting up Speed
 void DJAudioPlayer::setSpeed(double ratio) {
 	if (ratio < 0 || ratio > 100.0) {
 		std::cout << "DJ AudioPlayer Speed invalid values" << std::endl;
@@ -60,40 +64,47 @@ void DJAudioPlayer::setSpeed(double ratio) {
 
 }
 
+//setting up positon on track
 void DJAudioPlayer::setPosition(double posInSecs) {
 	transportSource.setPosition(posInSecs);
 }
 
 void DJAudioPlayer::setPositionRelative(double pos) {
 	if (pos < 0 || pos>1.0) {
-		std::cout << "DJ AudioPlayer Position invalid values" << std::endl;
+		//do nothing
+		//it's incorrect 
 	}
 	else {
 		double posInSecs = transportSource.getLengthInSeconds() * pos;
+
 		setPosition(posInSecs);
 	}
 }
 
+//start track
 void DJAudioPlayer::start() {
 	transportSource.start();
 }
 
+//stop track
 void DJAudioPlayer::stop() {
 	transportSource.stop();
 }
 
+//get current position of track
 double DJAudioPlayer::getPosition() {
 	return transportSource.getCurrentPosition()/transportSource.getLengthInSeconds();
 }
 
-
+//get duration of track
 String DJAudioPlayer::getTrackTotalTime() {
 	double time{ transportSource.getLengthInSeconds() };
 	String final = convertSecToMin(time);
 	return final;
-	//return transportSource.getLengthInSeconds();
+	
 }
 
+//convert to seconds
 String DJAudioPlayer::convertSecToMin(double sec) {
 	
 	int secondsRounded{ int(std::round(sec)) };

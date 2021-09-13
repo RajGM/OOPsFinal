@@ -1,3 +1,5 @@
+//Handles all of the GUI and funtionality of the entire application by sticking together relevant classes as per requirement
+
 #include "MainComponent.h"
 
 //==============================================================================
@@ -5,7 +7,7 @@ MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (800, 600);
+    setSize (1400, 800);
 
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
@@ -51,8 +53,6 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     mixerSource.addInputSource(&player1, false);
     mixerSource.addInputSource(&player2, false);
 
-
-
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
@@ -97,6 +97,5 @@ void MainComponent::resized()
     deckGUI2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight()/2);
 
     playlistComponent.setBounds(0,getHeight()/2,getWidth(),getHeight()/2);
-
 
 }

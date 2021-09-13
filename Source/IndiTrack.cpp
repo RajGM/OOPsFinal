@@ -7,9 +7,10 @@
 
   ==============================================================================
 */
-
+//CPP file for the IndiTrack Class
 #include "IndiTrack.h"
 
 IndiTrack::IndiTrack(File _file) : file(_file), title(_file.getFileNameWithoutExtension()), url(URL{_file}) {
 
 }
+

@@ -7,7 +7,7 @@
 
   ==============================================================================
 */
-
+//Code to display waveform and update it
 #include <JuceHeader.h>
 #include "WaveformDisplay.h"
 

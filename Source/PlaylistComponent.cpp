@@ -7,7 +7,7 @@
 
   ==============================================================================
 */
-
+//PlayListComponent.CPP handles the library persistence, saving and other stuff related to it.
 #include <JuceHeader.h>
 #include "PlaylistComponent.h"
 
@@ -17,35 +17,32 @@ PlaylistComponent::PlaylistComponent(DeckGUI* _deckGUI1,DeckGUI* _deckGUI2, DJAu
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     
+    //making components visible
     addAndMakeVisible(tableComponent);
     addAndMakeVisible(searchInput);
     addAndMakeVisible(importTrackButton);
     addAndMakeVisible(loadDeck1Button);
     addAndMakeVisible(loadDeck2Button);
 
+    //adding listener to the 
     searchInput.addListener(this);
     loadDeck1Button.addListener(this);
     loadDeck2Button.addListener(this);
     importTrackButton.addListener(this);
 
+    //default search text and behaviour to exectute after hitting enter
     searchInput.setTextToShowWhenEmpty("Enter Track Title to Search for", Colours::white);
     searchInput.onReturnKey = [this] { searchTrack(searchInput.getText()); };
 
+    //table headers
     tableComponent.getHeader().addColumn("ID", 1, 25);
     tableComponent.getHeader().addColumn("Track title", 2, 250);
     tableComponent.getHeader().addColumn("Time", 3, 45);
     tableComponent.getHeader().addColumn("Delete", 4, 45);
     tableComponent.setModel(this);
 
+    //calling load once application starts
     loadSavedTrackList();
-
-    searchInput.setColour(TextEditor::backgroundColourId,Colours::orange);
-    tableComponent.setColour(TableListBox::backgroundColourId, Colours::cornsilk);
-    
-    loadDeck1Button.setColour(TextButton::buttonColourId,Colours::forestgreen);
-    loadDeck2Button.setColour(TextButton::buttonColourId, Colours::limegreen);
-    importTrackButton.setColour(TextButton::buttonColourId, Colours::palevioletred);
-
 
 }
 
@@ -57,13 +54,7 @@ PlaylistComponent::~PlaylistComponent()
 
 void PlaylistComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
+    
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
 
     g.setColour (juce::Colours::grey);
@@ -74,6 +65,12 @@ void PlaylistComponent::paint (juce::Graphics& g)
     g.drawText ("PlaylistComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 
+    searchInput.setColour(TextEditor::backgroundColourId, Colours::orange);
+    tableComponent.setColour(TableListBox::backgroundColourId, Colours::cornsilk);
+    loadDeck1Button.setColour(TextButton::buttonColourId, Colours::forestgreen);
+    loadDeck2Button.setColour(TextButton::buttonColourId, Colours::limegreen);
+    importTrackButton.setColour(TextButton::buttonColourId, Colours::palevioletred);
+
 }
 
 void PlaylistComponent::resized()
@@ -82,12 +79,12 @@ void PlaylistComponent::resized()
     // components that your component contains..
     int rowH= getHeight()/4;
     int colW = getWidth() / 2;
-    tableComponent.setBounds(0,0, colW, 4*rowH);
-    searchInput.setBounds(colW, 0,colW, rowH);
-    importTrackButton.setBounds(colW, rowH, colW, rowH);
-    loadDeck1Button.setBounds(colW, rowH * 2, colW, rowH);
-    loadDeck2Button.setBounds(colW, rowH * 3, colW, rowH);
-    
+    int sectionWidth = 365;
+    tableComponent.setBounds(0,0, sectionWidth, 4*rowH);
+    searchInput.setBounds(getWidth() - sectionWidth, 0, sectionWidth, rowH);
+    importTrackButton.setBounds(getWidth() - sectionWidth, rowH, sectionWidth, rowH);
+    loadDeck1Button.setBounds(getWidth()-sectionWidth, rowH * 2, sectionWidth, rowH);
+    loadDeck2Button.setBounds(getWidth()-sectionWidth, rowH * 3, sectionWidth, rowH);
     
 }
 
@@ -152,6 +149,7 @@ Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int columnI
     return existingComponentToUpdate;
 }
 
+//button clicked behaviour
 void PlaylistComponent::buttonClicked(Button* button) {
     
     if (button == &loadDeck1Button) {
@@ -170,6 +168,20 @@ void PlaylistComponent::buttonClicked(Button* button) {
     }
 }
 
+//returns trackID for the track
+int PlaylistComponent::trackID(String trackTitle) {
+
+    for (int i = 0; i < trackData.size(); i++) {
+        DBG("TrackTitle:" + trackData[i].title);
+        if (trackData[i].title == trackTitle) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+//searchTracks and highlights it 
 void PlaylistComponent::searchTrack(String track) {
 
     if (track != "" || track.length()>0 ) {
@@ -182,53 +194,18 @@ void PlaylistComponent::searchTrack(String track) {
 
 }
 
-int PlaylistComponent::trackID(String trackTitle) {
-    for (int i = 0; i < trackData.size(); i++) {
-        if (trackData[i].title == trackTitle) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-void PlaylistComponent::loadTrackInList() {
-
-    FileChooser chooser{ "Select a Track or multiple Tracks..." };
-    if (chooser.browseForMultipleFilesToOpen()) {
-        
-        for (const File &file:chooser.getResults()) {
-
-            String fileName{ file.getFileNameWithoutExtension() };
-            if( isTrackPresent(fileName) ) {
-                IndiTrack newTrack{ file };
-                URL trackURL{ file };
-                newTrack.length = getLength(trackURL);
-                trackData.push_back(newTrack);
-            }
-            else {
-                //File exists do nothing
-            }
-
-        }
-
-    }
-
-}
-
+//deleteTrack
 void PlaylistComponent::deleteTrack(int id) {
     trackData.erase(trackData.begin() + id);
 }
 
-bool PlaylistComponent::isTrackPresent(String fileName) {
-    return "";
-}
-
+//get length of the track
 String PlaylistComponent::getLength(URL trackURL) {
     dataManagerplayer->loadURL(trackURL);
     return dataManagerplayer->getTrackTotalTime();
 }
 
+//load track to the audioPlayer
 void PlaylistComponent::loadToDeck(DeckGUI* deckGUI) {
 
     int selectedRow{ tableComponent.getSelectedRow() };
@@ -248,6 +225,42 @@ void PlaylistComponent::loadToDeck(DeckGUI* deckGUI) {
 
 }
 
+//load tracks into the library
+void PlaylistComponent::loadTrackInList() {
+
+    FileChooser chooser{ "Select a Track or multiple Tracks..." };
+    if (chooser.browseForMultipleFilesToOpen()) {
+
+        for (const File& file : chooser.getResults()) {
+
+            String fileName = file.getFileNameWithoutExtension();
+
+            if ( true ) {
+
+                IndiTrack newTrack{ file };
+                URL trackURL{ file };
+                newTrack.length = getLength(trackURL);
+                trackData.push_back(newTrack);
+
+            }
+            /*
+            else {
+                //File exists do nothing
+                juce::AlertWindow::showMessageBox(juce::AlertWindow::AlertIconType::InfoIcon,
+                    "File Present Already:",
+                    file.getFileNameWithoutExtension() + " is in the Library Already",
+                    "OK",
+                    nullptr
+                );
+            }*/
+
+        }
+
+    }
+
+}
+
+//save information about tracks in library to CSV files
 void PlaylistComponent::saveTrackList() {
 
    std::ofstream myfile("library.csv");
@@ -261,7 +274,7 @@ void PlaylistComponent::saveTrackList() {
 
 }
 
-
+//load tracks from the CSV to the library
 void PlaylistComponent::loadSavedTrackList() {
 
     std::ifstream myfile("library.csv");

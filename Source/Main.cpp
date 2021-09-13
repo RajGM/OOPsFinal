@@ -5,7 +5,7 @@
 
   ==============================================================================
 */
-
+//Main.CPP handles the application function
 #include <JuceHeader.h>
 #include "MainComponent.h"
 

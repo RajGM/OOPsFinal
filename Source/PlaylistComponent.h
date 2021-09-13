@@ -72,7 +72,6 @@ private:
     void searchTrack(String track);
     void deleteTrack(int id);
     int trackID(String trackTitle);
-    bool isTrackPresent(String fileName);
     void loadTrackInList();
 
     void saveTrackList();
